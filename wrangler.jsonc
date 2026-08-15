@@ -1,0 +1,9 @@
+{
+  // 落穂ひろい — 静的ファイルだけを配信する Worker
+  // public/ の中身をそのまま公開する。ビルドは無し。
+  "name": "ochibohiroi",
+  "compatibility_date": "2026-08-15",
+  "assets": {
+    "directory": "./public"
+  }
+}

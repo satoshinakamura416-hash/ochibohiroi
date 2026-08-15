@@ -13,12 +13,17 @@ https://ochibohiroi.com
 
 | ファイル | 中身 |
 |---|---|
-| `index.html` | サイト本体（一覧・全記事・スタイル・記事切替） |
-| `CNAME` | 独自ドメインの指定（`ochibohiroi.com`） |
+| `public/index.html` | サイト本体（一覧・全記事・スタイル・記事切替） |
+| `wrangler.jsonc` | Cloudflare Workers の設定。`public/` をそのまま配信する |
+
+## 公開の仕組み
+
+Cloudflare Workers（静的アセット配信）。`main` に push すると自動でデプロイされる。
+ビルドは無し。`public/` の中身がそのまま公開される。
 
 ## 記事を足すとき
 
-`index.html` の2箇所に追記する。
+`public/index.html` の2箇所に追記する。
 
 1. 一覧に `<button class="entry" data-open="eNNN">` を足す（新しいものが上）
 2. 本文に `<article class="article" id="eNNN" hidden>` を足す
