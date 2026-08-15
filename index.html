@@ -1,0 +1,924 @@
+<title>落穂ひろい</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  :root {
+    --paper:       #F7F6F1;
+    --surface:     #FFFFFF;
+    --surface-alt: #EFEEE8;
+    --ink:         #1E2430;
+    --ink-soft:    #434B58;
+    --muted:       #6C7480;
+    --faint:       #99A0A9;
+    --rule:        #DFDDD4;
+    --rule-soft:   #EAE8E1;
+
+    --indigo:      #2B4570;
+    --indigo-bg:   #E5E9F0;
+    --shop:        #2F6249;
+    --shop-bg:     #E6EFE9;
+    --void:        #8E948E;
+
+    --mincho: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "MS PMincho", serif;
+    --gothic: "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", "YuGothic", "Meiryo", "Noto Sans JP", sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:       #14171C;
+      --surface:     #1B1F26;
+      --surface-alt: #222730;
+      --ink:         #E7E9EC;
+      --ink-soft:    #C0C5CC;
+      --muted:       #949BA5;
+      --faint:       #6E757E;
+      --rule:        #2C313A;
+      --rule-soft:   #232830;
+
+      --indigo:      #93AFDA;
+      --indigo-bg:   #1D242F;
+      --shop:        #79BE97;
+      --shop-bg:     #1C2822;
+      --void:        #8A918B;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:       #14171C;
+    --surface:     #1B1F26;
+    --surface-alt: #222730;
+    --ink:         #E7E9EC;
+    --ink-soft:    #C0C5CC;
+    --muted:       #949BA5;
+    --faint:       #6E757E;
+    --rule:        #2C313A;
+    --rule-soft:   #232830;
+
+    --indigo:      #93AFDA;
+    --indigo-bg:   #1D242F;
+    --shop:        #79BE97;
+    --shop-bg:     #1C2822;
+    --void:        #8A918B;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--gothic);
+    font-size: clamp(17px, 1.03rem + 0.2vw, 19px);
+    line-height: 2.0;
+    font-feature-settings: "palt" 1;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0 1.4rem 5rem;
+  }
+
+  .shell { max-width: 42rem; margin: 0 auto; }
+
+  :focus-visible {
+    outline: 2px solid var(--indigo);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ================= masthead ================= */
+
+  .masthead {
+    padding: 3.6rem 0 1.8rem;
+    border-bottom: 2px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .sitename {
+    font-family: var(--mincho);
+    font-weight: 600;
+    font-size: clamp(2rem, 1.5rem + 2.4vw, 2.9rem);
+    letter-spacing: 0.22em;
+    line-height: 1.4;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  .tagline {
+    font-size: 0.88rem;
+    line-height: 1.9;
+    color: var(--muted);
+    margin: 0;
+    max-width: 30em;
+  }
+
+  .byline {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 0;
+  }
+
+  .signature {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+    margin: 0.35rem 0 0;
+  }
+
+  .sig-name {
+    font-family: var(--mincho);
+    font-weight: 600;
+    font-size: 1.12rem;
+    letter-spacing: 0.14em;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  .sig-role {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    line-height: 1.6;
+    color: var(--muted);
+    padding-left: 0.9rem;
+    border-left: 1px solid var(--rule);
+  }
+
+  .site-foot {
+    margin-top: 1rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .site-foot p { margin: 0; }
+
+  /* ================= list ================= */
+
+  .list { display: flex; flex-direction: column; }
+
+  .entry {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 0 1.6rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--rule);
+    background: none;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.18s ease;
+  }
+
+  .entry:hover { background: var(--surface); }
+  .entry:hover .entry-title { color: var(--indigo); }
+
+  .entry-date {
+    font-size: 0.8rem;
+    line-height: 1.7;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.06em;
+    padding-top: 0.35rem;
+  }
+
+  .entry-body { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .kind {
+    align-self: flex-start;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    line-height: 1;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid currentColor;
+  }
+
+  .kind--note { color: var(--indigo); }
+  .kind--raw  { color: var(--muted); }
+
+  .entry-title {
+    font-family: var(--mincho);
+    font-weight: 600;
+    font-size: clamp(1.3rem, 1.1rem + 0.9vw, 1.65rem);
+    line-height: 1.55;
+    letter-spacing: 0.03em;
+    margin: 0;
+    text-wrap: balance;
+    transition: color 0.18s ease;
+  }
+
+  .entry-lede {
+    font-size: 0.9rem;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  @media (max-width: 540px) {
+    .entry { grid-template-columns: 1fr; gap: 0.6rem; }
+    .entry-date { padding-top: 0; }
+  }
+
+  .list-foot {
+    padding: 2.5rem 0;
+    font-size: 0.82rem;
+    line-height: 1.9;
+    color: var(--faint);
+  }
+
+  /* ================= article ================= */
+
+  .article { padding: 2.5rem 0 0; }
+
+  .backlink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    font: inherit;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0.4rem 0;
+    margin-bottom: 2.2rem;
+    transition: color 0.18s ease;
+  }
+
+  .backlink:hover { color: var(--indigo); }
+
+  .art-head {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 2.4rem;
+  }
+
+  .art-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .art-title {
+    font-family: var(--mincho);
+    font-weight: 600;
+    font-size: clamp(2rem, 1.5rem + 2.4vw, 2.9rem);
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  .art-lede {
+    font-size: 0.98rem;
+    line-height: 1.95;
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 32em;
+  }
+
+  .prose { display: flex; flex-direction: column; gap: 1.6rem; }
+
+  .prose > p { margin: 0; }
+  .prose > p + p { margin-top: -0.35rem; }
+
+  .prose h2 {
+    font-family: var(--mincho);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 1.2rem + 1.3vw, 1.9rem);
+    line-height: 1.55;
+    letter-spacing: 0.03em;
+    text-wrap: balance;
+    margin: 2rem 0 -0.4rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .prose h3 {
+    font-family: var(--gothic);
+    font-weight: 700;
+    font-size: 1.04rem;
+    line-height: 1.75;
+    letter-spacing: 0.02em;
+    margin: 1.3rem 0 -0.55rem;
+    padding-left: 0.85rem;
+    border-left: 3px solid var(--shop);
+  }
+
+  .prose strong { font-weight: 700; color: var(--ink); }
+
+  .prose em {
+    font-style: normal;
+    background: linear-gradient(transparent 62%, var(--shop-bg) 62%);
+    padding: 0 0.1em;
+  }
+
+  .prose ul {
+    margin: 0;
+    padding-left: 1.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    color: var(--ink-soft);
+  }
+
+  .prose li::marker { color: var(--faint); }
+
+  .pull {
+    font-family: var(--mincho);
+    font-weight: 600;
+    font-size: clamp(1.12rem, 1rem + 0.65vw, 1.35rem);
+    line-height: 1.95;
+    letter-spacing: 0.03em;
+    color: var(--ink);
+    margin: 0.5rem 0;
+    padding: 1.4rem 0 1.4rem 1.6rem;
+    border-left: 2px solid var(--shop);
+    text-wrap: balance;
+  }
+
+  /* raw-note styling for the unedited entry */
+  .rawnote {
+    font-size: 0.98rem;
+    line-height: 2.05;
+    color: var(--ink-soft);
+    white-space: pre-wrap;
+    margin: 0;
+    font-family: var(--gothic);
+  }
+
+  /* ---- two modes ---- */
+
+  .modes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1rem;
+    margin: 0.5rem 0;
+  }
+
+  .mode {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-top-width: 3px;
+    padding: 1.4rem 1.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .mode--state { border-top-color: var(--indigo); }
+  .mode--shop  { border-top-color: var(--shop); }
+
+  .mode-tag {
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .mode--state .mode-tag { color: var(--indigo); }
+  .mode--shop  .mode-tag { color: var(--shop); }
+
+  .mode-name {
+    font-family: var(--mincho);
+    font-weight: 600;
+    font-size: 1.25rem;
+    line-height: 1.45;
+    margin: -0.45rem 0 0;
+  }
+
+  .mode-who {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin: -0.55rem 0 0;
+  }
+
+  .mode ul { font-size: 0.9rem; line-height: 1.85; gap: 0.2rem; padding-left: 1.1rem; }
+
+  /* ---- principles ---- */
+
+  .principles {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--rule);
+    margin: 0.3rem 0;
+  }
+
+  .principle {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--rule-soft);
+    align-items: baseline;
+  }
+
+  .principle dt {
+    font-family: var(--mincho);
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--shop);
+    letter-spacing: 0.03em;
+  }
+
+  .principle dd {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 480px) {
+    .principle { grid-template-columns: 1fr; gap: 0.1rem; }
+  }
+
+  /* ---- figure ---- */
+
+  figure { margin: 1rem 0; display: flex; flex-direction: column; gap: 0.85rem; }
+
+  .figbox {
+    overflow-x: auto;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 1.3rem 1rem;
+  }
+
+  .figbox svg { display: block; width: 100%; min-width: 460px; height: auto; }
+
+  figcaption { font-size: 0.8rem; line-height: 1.8; color: var(--muted); }
+
+  .svg-label { font-family: var(--gothic); font-size: 13px; font-weight: 700; }
+  .svg-small { font-family: var(--gothic); font-size: 11.5px; }
+  .svg-axis  { font-family: var(--gothic); font-size: 11px; letter-spacing: 0.1em; }
+  .svg-void  { font-family: var(--mincho); font-size: 20px; font-weight: 600; }
+
+  /* ---- callout ---- */
+
+  .callout {
+    background: var(--surface-alt);
+    padding: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    border-left: 3px solid var(--indigo);
+  }
+
+  .callout-tag {
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--indigo);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .callout p { font-size: 0.93rem; line-height: 1.9; color: var(--ink-soft); margin: 0; }
+  .callout strong { color: var(--ink); }
+
+  /* ---- split ---- */
+
+  .split {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+    gap: 1rem;
+  }
+
+  .split-item { padding: 1.15rem 1.25rem; display: flex; flex-direction: column; gap: 0.45rem; }
+  .split-item--state { background: var(--indigo-bg); }
+  .split-item--shop  { background: var(--shop-bg); }
+
+  .split-head {
+    font-family: var(--mincho);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.03em;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .split-item--state .split-head { color: var(--indigo); }
+  .split-item--shop  .split-head { color: var(--shop); }
+
+  .split-item p { font-size: 0.87rem; line-height: 1.85; color: var(--ink-soft); margin: 0; }
+
+  /* ---- closing ---- */
+
+  .closing {
+    margin-top: 1.4rem;
+    padding: 2rem 1.7rem;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--shop);
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .closing h2 {
+    font-size: 1.3rem;
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  .closing p { font-size: 0.93rem; line-height: 1.95; color: var(--ink-soft); margin: 0; }
+
+  .art-foot {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.79rem;
+    line-height: 1.9;
+    color: var(--faint);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .art-foot cite { font-style: italic; color: var(--muted); }
+
+  [hidden] { display: none !important; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+
+<div class="shell">
+
+  <!-- ==================== LIST VIEW ==================== -->
+  <div id="view-list">
+
+    <header class="masthead">
+      <p class="byline">Ochibo Hiroi</p>
+      <h1 class="sitename">落穂ひろい</h1>
+      <p class="tagline">店じまいのあと、地面に落ちたまま消えていく考えを拾い集めておく場所。</p>
+      <p class="signature">
+        <span class="sig-name">なかむらさとし</span>
+        <span class="sig-role">花屋の店主</span>
+      </p>
+    </header>
+
+    <main class="list">
+
+      <button class="entry" type="button" data-open="e002">
+        <span class="entry-date">2026.08.15</span>
+        <span class="entry-body">
+          <span class="kind kind--note">覚え書き</span>
+          <span class="entry-title">補助金と落穂ひろい</span>
+          <span class="entry-lede">持続化補助金は「作る」までは足りて、「知らせる」には足りない。なぜそうなるのかを、コーゼーションとエフェクチュエーションという二つの経営様式から考えた。</span>
+        </span>
+      </button>
+
+      <button class="entry" type="button" data-open="e001">
+        <span class="entry-date">2026.08.15</span>
+        <span class="entry-body">
+          <span class="kind kind--raw">雑感</span>
+          <span class="entry-title">小規模事業者持続化補助金のこと</span>
+          <span class="entry-lede">走り書きのまま。小規模事業者が小規模事業者たる所以は、小回りが利くこと、極めて近い未来にしか対応できないことにある。</span>
+        </span>
+      </button>
+
+    </main>
+
+    <p class="list-foot">思いついたことがあれば、また拾いに来ます。</p>
+
+    <footer class="site-foot">
+      <p>落穂ひろい　／　なかむらさとし</p>
+      <p>2026</p>
+    </footer>
+  </div>
+
+  <!-- ==================== ENTRY 001 ==================== -->
+  <article class="article" id="e001" hidden>
+    <button class="backlink" type="button" data-back>← 一覧にもどる</button>
+
+    <header class="art-head">
+      <p class="art-meta"><span>2026.08.15</span><span>／</span><span>雑感</span></p>
+      <h1 class="art-title">小規模事業者持続化補助金のこと</h1>
+      <p class="art-lede">走り書きのまま、直さずに置いておく。ここから次の一篇が生まれた。</p>
+    </header>
+
+    <div class="prose">
+      <p class="rawnote">小規模事業者持続化補助金など、小規模事業者にむけた補助金はありがたい。
+私も小規模事業者持続化補助金は2回ほどお世話になった。
+
+しかしながら、商工会議所がアシストしてくださるにしても、小規模事業者にとってこの申請は難しい。
+
+小規模事業者が小規模事業者たる所以こそ、そこにあるのだ。
+小回りが利く。また、極めて近い未来にしか対応できないのだ。
+従って事業計画や来年の見込み、再来年の見込みなど考えたこともないし、必要がないのだ。
+
+いや、それをいうと「だから小さいままなのだ、経営が圧迫されるのだ」——そういわれるかもしれない。
+しかし、現実的に無理なのだ。
+
+例えば新しい商品を開発して売り込むとする。
+そもそも小規模事業者の商品開発は狙って開発されたものでもないので、ほぼ偶然に出来てしまったものが「いけるかも？」とか、突発的に浮かんだアイデアが新しい商品となる。
+だから開発事業費を補助金申請すること自体が不可能で、ほぼ宣伝やPRにそれをつかうことになる。いわゆる「販路拡大」だ。
+
+この販路拡大こそやっかいで、メディアの広告など打とうものなら補助金額など雀の涙。
+開発よりも、短期間に集中した宣伝が莫大な費用になる。
+
+不正受給や未完成事業への交付を防ぐための申請はわかるが、本当に——ここが問題——末端の小規模事業者を救う補助金ならば、もっとハードルを下げるべきかと思う。</p>
+
+      <div class="callout">
+        <p class="callout-tag">この続き</p>
+        <p>この走り書きを整理したものが「<strong>補助金と落穂ひろい</strong>」。なぜ補助金が「作る」までしか届かないのか、そしてなぜ小規模事業者に事業計画が書けないのかを、経営学の言葉で説明できることが分かった。</p>
+      </div>
+    </div>
+  </article>
+
+  <!-- ==================== ENTRY 002 ==================== -->
+  <article class="article" id="e002" hidden>
+    <button class="backlink" type="button" data-back>← 一覧にもどる</button>
+
+    <header class="art-head">
+      <p class="art-meta"><span>2026.08.15</span><span>／</span><span>覚え書き</span></p>
+      <h1 class="art-title">補助金と落穂ひろい</h1>
+      <p class="art-lede">小規模事業者持続化補助金の構造的な限界と、コーゼーション／エフェクチュエーションで読み解く小商いの経営様式。</p>
+    </header>
+
+    <div class="prose">
+
+      <h2>出発点</h2>
+
+      <p>小規模事業者持続化補助金には2回お世話になった。ありがたい制度だと思う。</p>
+
+      <p>そのうえで、ずっと引っかかっていることがある。商工会議所が支援してくださるにしても、小規模事業者にとってこの申請は難しい。事業計画、来年の見込み、再来年の見込み——考えたこともないし、必要がない。</p>
+
+      <p>「だから小さいままなのだ」と言われるかもしれない。しかし現実的に無理なのだ。</p>
+
+      <h2>一 　制度の問題</h2>
+
+      <h3>審査は「計画が書けること」を測っている</h3>
+
+      <p>「事業計画が書けること」と「補助金を出す価値がある事業者かどうか」は、ほとんど相関していない。にもかかわらず、審査は前者を測っている。</p>
+
+      <p>証拠は、補助金コンサルという産業が成立していること自体。本来なら販路拡大に使われるはずの原資の一部が、申請書を書く技術に対して流出している。商工会議所が無償で支援してくれるのは、この歪みを行政側が自覚しているからだろう。</p>
+
+      <h3>「作る」までは足りて、「知らせる」には足りない</h3>
+
+      <p>補助金の会計は「残るもの」と相性がよく、「消えるもの」と相性が悪い。什器は数年使える。サイトは資産として残る。チラシは現物がある。どれも支出と成果物が一対一で対応していて、確認しやすい。</p>
+
+      <p>一方で広告出稿は、打った瞬間から認知が減衰していく支出。領収書は同じように出るのに、「何が残ったか」を示せない。だから制度は形式上は広告宣伝費を対象経費に含めていても、<em>金額設計そのものが制作物を前提に組まれている</em>。50〜200万円という額は、明らかに「モノを一式そろえる」ための額である。</p>
+
+      <h3>宣伝は「点」では効かない</h3>
+
+      <p>チラシ1回、雑誌1P、スポット数本。これで認知が立ち上がることはまずない。反復して初めて効く。ところが持続化補助金は単年度・一過性の支出しか見ない。継続的な出稿や運用は、補助期間が終わった瞬間に自腹に戻る。</p>
+
+      <p class="pull">補助金が支援できる形（点の支出）と、宣伝が効く形（線の反復）が、そもそも噛み合っていない。</p>
+
+      <p>これは金額を倍にしても解決しない。1回の出稿が2回になるだけである。結果として、立派なECサイトと什器とチラシが手元に残って、誰にも知られていない。「補助金でサイトを作ったけれど売れない」という定番の失敗。あれは事業者が悪いのではなく、制度が資産形成までしか設計されていないから起きている。</p>
+
+      <h3>そして、空白の象限</h3>
+
+      <p>「もっと額が要る」と言うと、事業再構築補助金のような大型のものを案内される。でもあれは計画の要求水準が桁違いに上がる。つまり日本の補助金制度は、<strong>金額と申請難度が連動している</strong>。</p>
+
+      <figure>
+        <div class="figbox">
+          <svg viewBox="0 0 560 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="quadTitle">
+            <title id="quadTitle">補助額と計画要求水準の2軸で見た補助金制度の分布。低い計画要求で大きな補助額という象限が空白になっている。</title>
+
+            <rect x="86" y="46" width="204" height="140" fill="var(--surface-alt)" opacity="0.5"/>
+            <rect x="290" y="46" width="204" height="140" fill="var(--indigo-bg)"/>
+            <rect x="86" y="186" width="204" height="140" fill="var(--shop-bg)"/>
+
+            <rect x="86" y="46" width="204" height="140" fill="none"
+                  stroke="var(--void)" stroke-width="1.5" stroke-dasharray="6 5"/>
+
+            <line x1="86" y1="326" x2="494" y2="326" stroke="var(--ink)" stroke-width="1.5"/>
+            <line x1="86" y1="46"  x2="86"  y2="326" stroke="var(--ink)" stroke-width="1.5"/>
+            <line x1="290" y1="46" x2="290" y2="326" stroke="var(--rule)" stroke-width="1"/>
+            <line x1="86" y1="186" x2="494" y2="186" stroke="var(--rule)" stroke-width="1"/>
+
+            <defs>
+              <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5"
+                      markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--faint)"/>
+              </marker>
+            </defs>
+            <line x1="200" y1="255" x2="340" y2="160"
+                  stroke="var(--faint)" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ar)"/>
+            <text class="svg-small" x="263" y="197" fill="var(--faint)" text-anchor="middle"
+                  stroke="var(--surface)" stroke-width="3.5" paint-order="stroke"
+                  transform="rotate(-34.2 263 197)">額が上がると難度も上がる</text>
+
+            <text class="svg-void"  x="188" y="105" fill="var(--void)"  text-anchor="middle">空　白</text>
+            <text class="svg-small" x="188" y="132" fill="var(--void)"  text-anchor="middle">額は要るが計画は書けない層</text>
+            <text class="svg-small" x="188" y="151" fill="var(--void)"  text-anchor="middle">＝ 小規模事業者そのもの</text>
+
+            <text class="svg-label" x="392" y="108" fill="var(--indigo)" text-anchor="middle">事業再構築補助金</text>
+            <text class="svg-small" x="392" y="130" fill="var(--indigo)" text-anchor="middle">大きな額／重い計画</text>
+
+            <text class="svg-label" x="188" y="248" fill="var(--shop)"  text-anchor="middle">持続化補助金</text>
+            <text class="svg-small" x="188" y="270" fill="var(--shop)"  text-anchor="middle">50〜200万円／中程度の計画</text>
+
+            <text class="svg-small" x="392" y="258" fill="var(--faint)" text-anchor="middle">（誰も申請しない）</text>
+
+            <text class="svg-axis" x="290" y="352" fill="var(--muted)" text-anchor="middle">計 画 要 求 水 準</text>
+            <text class="svg-small" x="96"  y="346" fill="var(--faint)" text-anchor="start">低</text>
+            <text class="svg-small" x="484" y="346" fill="var(--faint)" text-anchor="end">高</text>
+
+            <text class="svg-axis" x="0" y="0" fill="var(--muted)" text-anchor="middle"
+                  transform="translate(46,186) rotate(-90)">補 助 額</text>
+            <text class="svg-small" x="0" y="0" fill="var(--faint)" text-anchor="middle"
+                  transform="translate(70,56)">大</text>
+            <text class="svg-small" x="0" y="0" fill="var(--faint)" text-anchor="middle"
+                  transform="translate(70,320)">小</text>
+          </svg>
+        </div>
+        <figcaption>「まとまった額は要るが、精緻な計画は書けない（書く意味がない）」という象限が、制度上まるごと空白になっている。</figcaption>
+      </figure>
+
+      <p class="pull">だから主張は「ハードルを下げろ」ではない。<br>金額と計画要求のセットを外せ。<br>測る対象を、予測能力から実行実績に移せ。</p>
+
+      <p>不正受給を防ぐ機能は、事前の計画書ではなく事後の領収書と実績で果たせる。「下げろ」だと反論されて終わるが、この形なら不正防止の論点を潰したうえで通る。</p>
+
+      <h2>二 　二つの経営様式</h2>
+
+      <p>サラスバシーの理論。制度側と商店側は、そもそも別の物差しを使っている。</p>
+
+      <div class="modes">
+        <div class="mode mode--state">
+          <p class="mode-tag">Causation</p>
+          <p class="mode-name">コーゼーション</p>
+          <p class="mode-who">制度側の様式</p>
+          <ul>
+            <li>目的が先にある</li>
+            <li>手段を逆算して集める</li>
+            <li>未来は予測できる前提</li>
+            <li>計画・目標・逆算</li>
+          </ul>
+        </div>
+        <div class="mode mode--shop">
+          <p class="mode-tag">Effectuation</p>
+          <p class="mode-name">エフェクチュエーション</p>
+          <p class="mode-who">商店側の様式</p>
+          <ul>
+            <li>手持ちの手段が先にある</li>
+            <li>目的は後から立ち現れる</li>
+            <li>未来は予測できない前提</li>
+            <li>応答・即興・落穂ひろい</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>エフェクチュエーションは「劣った経営」ではない</h3>
+
+      <p>サラスバシーがこの概念を導き出したのは、失敗した起業家ではなく、複数回成功している<strong>熟練起業家</strong>の意思決定を追跡した研究から。彼らは予測できない状況では、そろって計画から入らなかった。つまりこれは、<em>不確実性の下での「上級者の型」</em>として観察されたものである。</p>
+
+      <h3>五つの原則</h3>
+
+      <dl class="principles">
+        <div class="principle">
+          <dt>手中の鳥</dt>
+          <dd>いま手元にあるもの——自分は誰か、何を知っているか、誰を知っているか——から始める。落穂ひろい、という比喩とほとんど同じことを別の絵で言っている。</dd>
+        </div>
+        <div class="principle">
+          <dt>許容可能な損失</dt>
+          <dd>儲けの見込みではなく「いくらまでなら失っても店が続くか」で決める。</dd>
+        </div>
+        <div class="principle">
+          <dt>レモネード</dt>
+          <dd>想定外の出来事を、そのまま材料に変える。偶然できたものが「いけるかも」に化けるやつ。</dd>
+        </div>
+        <div class="principle">
+          <dt>クレイジーキルト</dt>
+          <dd>誰と組めるかで、やることの形が変わる。</dd>
+        </div>
+        <div class="principle">
+          <dt>飛行機のパイロット</dt>
+          <dd>未来を予測するのではなく、自分が制御できる範囲を広げる。</dd>
+        </div>
+      </dl>
+
+      <div class="callout">
+        <p class="callout-tag">役所がコーゼーションを使う理由</p>
+        <p>「そちらの方が優れているから」ではない。<strong>公金は事前の意思表明がないと事後の説明責任が果たせないから</strong>である。計画書は経営の道具として要求されているのではなく、会計検査に耐えるための書類として要求されている。だから中身が実態と合わなくても、制度としては困らない。</p>
+        <p>悪意はどちらにもない。ただ、測っている物差しが最初から別物なのだ。</p>
+      </div>
+
+      <h2>三 　使い分けの条件</h2>
+
+      <p>この二つは対立する方法論ではなく、状況によって切り替わるもの。ただし、<strong>使い分けるのは人ではなく状況の方</strong>である。分かれ目は「未来が予測できるかどうか」の一点。</p>
+
+      <ul>
+        <li>予測できる領域では、コーゼーションが正しい</li>
+        <li>予測できない領域では、そもそもコーゼーションが<strong>使えない</strong>。データがないので、精緻に見える計画ほど嘘が混ざる</li>
+      </ul>
+
+      <h3>花屋はすでに両方使っている</h3>
+
+      <div class="split">
+        <div class="split-item split-item--state">
+          <p class="split-head">母の日・お盆・彼岸</p>
+          <p>需要が読める。何本仕入れて、誰を何時間入れて、いつ仕込むか。前年の数字があり、目標が先にあり、手段を逆算している。完全なコーゼーション。</p>
+        </div>
+        <div class="split-item split-item--shop">
+          <p class="split-head">日々の商い</p>
+          <p>突然の引き合い、たまたま良い花が入った、ふと思いついた仕立て。明日の葬儀も、急な誕生日も、予測ではなく応答でしか受けられない。</p>
+        </div>
+      </div>
+
+      <p>同じ店の中で、季節行事は計画で回し、日々は応答で回している。矛盾ではなく、対象が違うだけ。</p>
+
+      <h3>時間軸でも切り替わる</h3>
+
+      <p>熟練者は<strong>立ち上げ期はエフェクチュエーション、軌道に乗ったらコーゼーション</strong>に移行していた。何が当たるか分からないうちは手元から動かし、当たったものが見えたら、そこは計画で伸ばす。</p>
+
+      <h3>ただし対等ではない</h3>
+
+      <p>エフェクチュエーションはいつでも使えるが、コーゼーションはデータがないと使えない。完全に対称ではなく、<em>エフェクチュエーションの方が土台</em>で、条件が整った領域でだけコーゼーションが乗る、という関係。</p>
+
+      <p>小規模事業者が前者に寄るのは、能力ではなく、そういう領域で商売をしているからである。</p>
+
+      <div class="closing">
+        <h2>四 　次回の申請に活かすこと</h2>
+        <p><strong>申請書は「予測できる部分」だけをコーゼーションで書けばいい。</strong></p>
+        <p>新商品が当たるかどうかは書けない。書いても嘘になるし、読む側にも伝わる。でも「母の日商戦で例年これだけ動く、そこにこの導線を足すと歩留まりがこう変わる」なら、根拠のある数字で書ける。実績があるので。</p>
+        <p>計画が書けないのではない。<strong>書ける領域と書けない領域が混ざっている</strong>。そこを分けずに全部を予測の形にしようとするから、無理が出る。</p>
+      </div>
+
+      <footer class="art-foot">
+        <p>Saras D. Sarasvathy, <cite>Effectuation: Elements of Entrepreneurial Expertise</cite>, 2008.</p>
+        <p>熟練起業家27名の意思決定プロセスを追跡した研究から、エフェクチュエーションの5原則を導出。</p>
+      </footer>
+
+    </div>
+  </article>
+
+</div>
+
+<script>
+  (function () {
+    var list = document.getElementById('view-list');
+    var articles = Array.prototype.slice.call(document.querySelectorAll('.article'));
+
+    function show(id) {
+      var target = id ? document.getElementById(id) : null;
+      articles.forEach(function (a) { a.hidden = (a !== target); });
+      list.hidden = !!target;
+      window.scrollTo(0, 0);
+    }
+
+    // Hash is a nice-to-have for bookmarking, but some sandboxed viewers block
+    // navigation entirely — so view switching never depends on it.
+    function setHash(value) {
+      // replaceState keeps this same-document; assigning location.hash counts as a
+      // top-frame navigation and is refused outright in some sandboxed viewers.
+      try {
+        window.history.replaceState(null, '', value ? '#' + value : '#');
+      } catch (e) { /* opaque origin: bookmarking just isn't available here */ }
+    }
+
+    document.querySelectorAll('[data-open]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-open');
+        show(id);
+        setHash(id);
+      });
+    });
+
+    document.querySelectorAll('[data-back]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        show(null);
+        setHash('');
+      });
+    });
+
+    window.addEventListener('hashchange', function () {
+      var id = window.location.hash.replace('#', '');
+      show(document.getElementById(id) ? id : null);
+    });
+
+    // Honor a deep link on first load.
+    var initial = window.location.hash.replace('#', '');
+    if (initial && document.getElementById(initial)) { show(initial); }
+  })();
+</script>
