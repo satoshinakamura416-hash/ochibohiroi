@@ -564,6 +564,9 @@
 
   .art-foot cite { font-style: italic; color: var(--muted); }
 
+  /* 語の途中で改行させない（<span class="nw">土産屋</span> などの熟語用） */
+  .nw { white-space: nowrap; }
+
   [hidden] { display: none !important; }
 
   @media (prefers-reduced-motion: reduce) {
@@ -593,7 +596,7 @@
         <span class="entry-body">
           <span class="kind kind--note">覚え書き</span>
           <span class="entry-title">売店と、受付</span>
-          <span class="entry-lede">先日、知人の葬儀のお手伝いをした。<br>家に帰ってから、不謹慎なことを考えた。<br>土産屋の売店と、香典返しの受付は、やっていることが同じではないか。</span>
+          <span class="entry-lede">先日、知人の葬儀のお手伝いをした。<br>家に帰ってから、不謹慎なことを考えた。<br><span class="nw">土産屋</span>の売店と、香典返しの受付は、やっていることが同じではないか。</span>
         </span>
       </button>
 
@@ -2707,7 +2710,7 @@
     <header class="art-head">
       <p class="art-meta"><span>2026.09.20</span><span>／</span><span>覚え書き</span></p>
       <h1 class="art-title">売店と、受付</h1>
-      <p class="art-lede">先日、知人の葬儀のお手伝いをした。<br>家に帰ってから、不謹慎なことを考えた。<br>土産屋の売店と、香典返しの受付は、やっていることが同じではないか。</p>
+      <p class="art-lede">先日、知人の葬儀のお手伝いをした。<br>家に帰ってから、不謹慎なことを考えた。<br><span class="nw">土産屋</span>の売店と、香典返しの受付は、やっていることが同じではないか。</p>
     </header>
 
     <div class="prose">
@@ -2722,7 +2725,7 @@
 
       <h3>売店の販売員</h3>
 
-      <p>土産屋の売店に、販売員がいる。キオスクでもいい。</p>
+      <p><span class="nw">土産屋</span>の売店に、販売員がいる。キオスクでもいい。</p>
 
       <p>客から金を受け取り、商品を渡す。</p>
 
@@ -2736,7 +2739,7 @@
 
       <p>お香典を頂き、香典返しをお渡しする。</p>
 
-      <p><em>ここに、土産屋の販売員が重なる。</em></p>
+      <p><em>ここに、<span class="nw">土産屋</span>の販売員が重なる。</em></p>
 
       <p>やっていることは、金を受け取って品を渡すことだ。同じである。</p>
 
@@ -2754,7 +2757,7 @@
 
       <h3>とてもいい商売だ</h3>
 
-      <p>土産屋なら、売店に販売員を置き、その人に報酬を払う。</p>
+      <p><span class="nw">土産屋</span>なら、売店に販売員を置き、その人に報酬を払う。</p>
 
       <p>葬儀社は、受付に立つ人に報酬を払わない。<strong>そして返礼品の利は、取る。</strong></p>
 
